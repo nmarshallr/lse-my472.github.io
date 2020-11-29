@@ -10,6 +10,7 @@ output: html_document
 library("tidyverse")
 library("plotly")
 library("scales")
+library ("lubridate")
 ```
 
 
@@ -43,31 +44,54 @@ Your code here:
 
 # Transform date column to datetime (lubridate package!)
 
+unemp$date <- as_date (unemp$date)
 
+yrng <- range(unemp$unemp, na.rm = TRUE)
+xrng <- range(unemp$date, na.rm = TRUE)
+
+pq<- ggplot(unemp)+geom_line (aes(x=date, y=unemp))
 
 # Create a line-plot with unemployment and date
 
 
-
 # Fix axes and add colored rectangles
 
-
+pq <- pq+
+  geom_rect(data=pres,
+            aes(xmin=start,xmax=end,
+                fill=party),
+            ymin=yrng[1]-0.05, ymax=yrng[2]+0.05)+
+  scale_fill_manual(values=alpha(c("blue","red"),0.2))+
+  scale_x_date(limits=xrng, expand=c(0,0))
+pq
 
 # Adding president names
+
+pq <- pq+
+  geom_text (data=pres,
+             aes(x=start, y=yrng[2], label=name), 
+             size=3, hjust=0.25, vjust=1.25, angle=90)
+pq
 
 
 
 # Adding lines to separate presidencies
 
-
+pq<- pq+
+  geom_vline (data=pres,
+              aes (xintercept =as.numeric(start)),
+              color="grey50",linetype = "dashed", size= 0.5)
+pq
 
 # Finally, moving legend and removing x axis title
 
+14*30
 
 
 # Adjusting y axis
 
-
+yrng <- range(unemp$unemp, na.rm = TRUE)
+xrng <- range(unemp$date, na.rm = TRUE)
 
 ```
 
